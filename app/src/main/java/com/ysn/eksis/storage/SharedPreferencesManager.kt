@@ -1,4 +1,4 @@
-package com.ysn.eksis;
+package com.ysn.eksis.storage;
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -9,7 +9,7 @@ class SharedPreferencesManager constructor(context: Context) {
 
     companion object {
         const val PREF_NAME = "pref_name"
-        const val ACCESS_TOKEN: String = "access_token"
+        const val IS_LOGIN = "is_login"
     }
 
     init {
