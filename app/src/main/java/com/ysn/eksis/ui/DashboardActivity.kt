@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.facebook.AccessToken
@@ -21,6 +22,8 @@ import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_dashboard.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -32,20 +35,43 @@ class DashboardActivity : AppCompatActivity() {
 
     lateinit var accessToken: AccessToken
     lateinit var unsplashApi: UnsplashApi
+    lateinit var menuBottomSheetDialogFragment: MenuBottomSheetDialogFragment
     var isOpenMenu = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
+        initEventBus()
         initFacebookService()
         initAccessToken()
         initMenuHamburger()
+        initMenuBottomSheetDialogFragment()
         loadPhotoProfile()
         loadBackgroundProfile()
         loadProfile()
         loadFriends()
         loadPhotos()
+    }
+
+    private fun initEventBus() {
+        EventBus.getDefault().register(this)
+    }
+
+    @Subscribe
+    fun onMessageEvent(hashMap: HashMap<String, Any>) {
+        Log.d(TAG, "onMessageEvent")
+        val animatedVectorDrawableCompat = AnimatedVectorDrawableCompat.create(
+            this@DashboardActivity,
+            R.drawable.ic_menu_back_arrow_animatable
+        )
+        image_view_menu_activity_dashboard.setImageDrawable(animatedVectorDrawableCompat)
+        animatedVectorDrawableCompat!!.start()
+        isOpenMenu = false
+    }
+
+    private fun initMenuBottomSheetDialogFragment() {
+        menuBottomSheetDialogFragment = MenuBottomSheetDialogFragment()
     }
 
     private fun initMenuHamburger() {
@@ -59,9 +85,9 @@ class DashboardActivity : AppCompatActivity() {
             image_view_menu_activity_dashboard.setImageDrawable(animatedVectorDrawableCompat)
             animatedVectorDrawableCompat!!.start()
             if (isOpenMenu) {
-
+                menuBottomSheetDialogFragment.dismiss()
             } else {
-
+                menuBottomSheetDialogFragment.show(supportFragmentManager, TAG)
             }
             isOpenMenu = !isOpenMenu
         }
@@ -166,5 +192,6 @@ class DashboardActivity : AppCompatActivity() {
     private fun loadPhotos() {
         text_view_value_photos.text = "0"
     }
+
 
 }
