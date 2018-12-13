@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Eksis</string>
+    <string name="facebook_app_id">347421539381843</string>
+    <string name="fb_login_protocol_scheme">fb347421539381843</string>
 </resources>
